@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_socketio import SocketIO, emit
-socketio = SocketIO(app, async_mode='gevent')
 from werkzeug.utils import secure_filename
 from pymongo import MongoClient
 import os
@@ -13,6 +12,10 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads/comprobantes'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 app.secret_key = 'supersecretkey'  # Necesario para los flashes
+
+
+socketio = SocketIO(app, async_mode='gevent')
+
 
 # MongoDB Atlas connection
 client = MongoClient(os.getenv('MONGO_URI'))
