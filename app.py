@@ -5,6 +5,8 @@ from pymongo import MongoClient
 import os
 import time
 from dotenv import load_dotenv
+from gevent.pywsgi import WSGIServer
+
 
 load_dotenv()
 
@@ -14,7 +16,7 @@ app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 app.secret_key = 'supersecretkey'  # Necesario para los flashes
 
 
-socketio = SocketIO(app, async_mode='gevent')
+socketio = SocketIO(app)
 
 
 # MongoDB Atlas connection
@@ -88,4 +90,6 @@ def on_connect():
     print('Cliente conectado.')
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    http_server = WSGIServer(('0.0.0.0', port), app)
+    socketio.run(app, host='0.0.0.0', port=port)
