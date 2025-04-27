@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.rack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.habitacion {
+    width: 100px;
+    height: 120px;
+    border: 1px solid #ccc;
+    background: white;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.habitacion img {
+    width: 50px;
+    height: 50px;
+}
+
+.flashes {
+    color: red;
+    list-style: none;
+}
+
+/* Estilo de la notificación */
+#notificationContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.notification {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    font-weight: bold;
+    transition: opacity 1s ease;
+}
+
+.notification:hover {
+    background-color: #0056b3;
+}

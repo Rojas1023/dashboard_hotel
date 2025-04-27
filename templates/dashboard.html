@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Dashboard de Habitaciones</h1>
+    <div class="rack">
+        {% for hab in habitaciones %}
+            <div class="habitacion" id="habitacion-{{ hab['_id'] }}" onclick="location.href='/habitacion/{{ hab['_id'] }}'">
+                <img src="{{ url_for('static', filename='images/' + hab['estado'].replace(' ', '_') + '/estado.png') }}" alt="Estado" id="estado-{{ hab['_id'] }}">
+                <p>Habitación {{ hab['_id'] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Reproductor de sonido para notificaciones -->
+    <audio id="notificationSound" src="{{ url_for('static', filename='notification.mp3') }}" preload="auto"></audio>
+
+    <div id="notificationContainer"></div> <!-- Contenedor de notificaciones -->
+
+    <script>
+        const socket = io();
+        let currentNotification = null;
+
+        // Función para mostrar la notificación
+        function showNotification(message) {
+            const notificationContainer = document.getElementById('notificationContainer');
+            // Si ya hay una notificación, reemplázala con la nueva
+            if (currentNotification) {
+                currentNotification.remove();
+            }
+
+            // Crear el elemento de la notificación
+            const notification = document.createElement('div');
+            notification.classList.add('notification');
+            notification.innerText = message;
+
+            // Añadir la notificación al contenedor
+            notificationContainer.appendChild(notification);
+            currentNotification = notification;
+
+            // Reproducir el sonido de notificación
+            document.getElementById('notificationSound').play();
+
+            // Eliminar la notificación después de 1 minuto
+            setTimeout(() => {
+                if (notification === currentNotification) {
+                    notification.remove();
+                    currentNotification = null;
+                }
+            }, 60000);
+        }
+
+        // Función para actualizar el estado de la habitación en la interfaz
+        function updateRoomState(habitacion_id, estado) {
+            const estadoImagen = document.getElementById(`estado-${habitacion_id}`);
+            if (estadoImagen) {
+                // Cambiar la imagen según el nuevo estado
+                estadoImagen.src = `/static/images/${estado.replace(' ', '_')}/estado.png`;
+            }
+        }
+
+        // Escuchar el evento de la notificación enviada desde el servidor
+        socket.on('habitacion_actualizada', function(data) {
+            const message = `Habitación ${data.habitacion_id} cambió a estado: ${data.estado}`;
+            showNotification(message);
+            
+            // Actualizar el estado de la habitación
+            updateRoomState(data.habitacion_id, data.estado);
+        });
+    </script>
+</body>
+</html>

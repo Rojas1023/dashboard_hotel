@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Habitación {{ habitacion['_id'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Habitación {{ habitacion['_id'] }}</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>Estado:</label>
+        <select name="estado" id="estado" onchange="mostrarDatosReserva()">
+            <option value="Libre" {% if habitacion['estado'] == 'Libre' %}selected{% endif %}>Libre</option>
+            <option value="Ocupada" {% if habitacion['estado'] == 'Ocupada' %}selected{% endif %}>Ocupada</option>
+            <option value="Sucia" {% if habitacion['estado'] == 'Sucia' %}selected{% endif %}>Sucia</option>
+            <option value="Fuera de Servicio" {% if habitacion['estado'] == 'Fuera de Servicio' %}selected{% endif %}>Fuera de Servicio</option>
+            <option value="Reserva Temporal" {% if habitacion['estado'] == 'Reserva Temporal' %}selected{% endif %}>Reserva Temporal</option>
+            <option value="Reservada" {% if habitacion['estado'] == 'Reservada' %}selected{% endif %}>Reservada</option>
+        </select>
+
+        <div id="reservaDatos" style="display: {% if habitacion['estado'] == 'Reservada' %}block{% else %}none{% endif %};">
+            <label>Nombre:</label><input type="text" name="nombre" value="{{ habitacion.get('nombre', '') }}">
+            <label>Celular:</label><input type="text" name="celular" value="{{ habitacion.get('celular', '') }}">
+            <label>Fecha de llegada:</label><input type="date" name="fecha_llegada" value="{{ habitacion.get('fecha_llegada', '') }}">
+            <label>Hora aproximada de llegada:</label><input type="time" name="hora_llegada" value="{{ habitacion.get('hora_llegada', '') }}">
+            <label>Cantidad de personas:</label><input type="number" name="personas" value="{{ habitacion.get('personas', '') }}">
+            <label>Subir Comprobante de pago:</label><input type="file" name="comprobante" accept=".png,.jpg,.jpeg">
+        </div>
+
+        {% if habitacion.get('comprobante') %}
+            <div>
+                <label>Comprobante:</label>
+                <img src="{{ url_for('static', filename='uploads/comprobantes/' + habitacion['comprobante'].split('/')[-1]) }}" alt="Comprobante" style="max-width: 200px;">
+            </div>
+        {% endif %}
+
+        <button type="submit">Actualizar</button>
+    </form>
+
+    <script>
+        function mostrarDatosReserva() {
+            var estado = document.getElementById('estado').value;
+            document.getElementById('reservaDatos').style.display = (estado === 'Reservada') ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
