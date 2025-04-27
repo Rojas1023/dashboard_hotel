@@ -25,7 +25,7 @@ db = client['hotel_dashboard']
 habitaciones_collection = db['habitaciones']
 
 # Flask-SocketIO para tiempo real
-socketio = SocketIO(app, cors_allowed_origins="*")
+# socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Diccionario para cooldown por habitación
 cooldowns = {}
